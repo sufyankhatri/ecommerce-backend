@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConnectionOptions, getConnectionOptions } from 'typeorm';
+import { getConnectionOptions } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import DatabaseConfig from './config/database.config';
-import { InvoiceModule } from './invoice/user.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -15,7 +15,8 @@ import { InvoiceModule } from './invoice/user.module';
           autoLoadEntities: true,
         }),
     }),
-    InvoiceModule,
+    UserModule,
+    AuthModule,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),

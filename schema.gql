@@ -9,12 +9,17 @@ type User {
   cpassword: String!
 }
 
+type AuthResponse {
+  access_token: String!
+}
+
 type Query {
   users: [User!]!
 }
 
 type Mutation {
   createUser(user: CreateUser!): User!
+  login(password: String!, email: String!): AuthResponse!
 }
 
 input CreateUser {

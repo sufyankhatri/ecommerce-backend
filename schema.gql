@@ -2,29 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
+type UserModel {
   id: String!
+  name: String!
   email: String!
   password: String!
-  cpassword: String!
 }
 
 type AuthResponse {
   access_token: String!
+  refresh_token: String!
 }
 
 type Query {
-  users: [User!]!
+  users: [UserModel!]!
 }
 
 type Mutation {
-  createUser(user: CreateUser!): User!
+  createUser(cpassword: String!, user: User!): UserModel!
+  deleteUser(id: String!): UserModel!
   login(password: String!, email: String!): AuthResponse!
 }
 
-input CreateUser {
+input User {
   name: String!
   email: String!
   password: String!
-  cpassword: String!
 }

@@ -1,14 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import {
-  Column, Entity, PrimaryGeneratedColumn
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @ObjectType()
 @Entity()
-export class User {
+export class UserModel {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Field()
+  @Column('text')
+  name: string;
 
   @Field()
   @Column('text')
@@ -18,7 +20,4 @@ export class User {
   @Column('text')
   password: string;
 
-  @Field()
-  @Column('text')
-  cpassword: string;
 }

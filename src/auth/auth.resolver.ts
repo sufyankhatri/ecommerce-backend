@@ -1,30 +1,28 @@
-import { Inject } from '@nestjs/common';
-import {
-    Args,
-    Field,
-    Mutation,
-    ObjectType, Resolver
-} from '@nestjs/graphql';
-import { Column, Entity } from 'typeorm';
+import { Inject, UseGuards } from '@nestjs/common';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthResponse } from './auth.model';
 import { AuthService } from './auth.service';
-
-@ObjectType()
-@Entity()
-class AuthResponse {
-  @Field()
-  @Column('text')
-  access_token: string;
-}
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Resolver(of => AuthResponse)
 export class AuthResolver {
   constructor(@Inject(AuthService) private authService: AuthService) {}
 
+  // @UseGuards(LocalAuthGuard)
   @Mutation(returns => AuthResponse)
   login(
-    @Args('email', { type: () => String }) email: string,
-    @Args('password', { type: () => String }) password: string,
+    @Args('email') email: string,
+    @Args('password') password: string,
   ): Promise<AuthResponse> {
-    return this.authService.login(email);
+    console.log('email', email, password);
+    return this.authService.validateUser(email, password);
   }
+
+  @Mutation(returns => AuthResponse) 
+  refreshToken(
+    @Args('refreshToken',)
+  )
+  
 }

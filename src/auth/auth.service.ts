@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user/user.model';
+import { jwtConstants } from '../../constants';
 import { UserService } from '../user/user.service';
+import { AuthResponse } from './auth.model';
 
 @Injectable()
 export class AuthService {
@@ -10,21 +11,32 @@ export class AuthService {
     private jwtTokenService: JwtService,
   ) {}
 
-  async validateUserCredentials(email: string, password: string): Promise<any> {
-    const user = await this.userService.findOne(email);
+  async validateUser(email: string, password: string): Promise<AuthResponse> {
+    try {
+      const user = await this.userService.findOneByEmail(email);
+      console.log('user', user);
+      if (!user) {
+        throw new ForbiddenException('access denied');
+      }
+      if (user && user.password === password) {
+        const { password, ...result } = user;
 
-    if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+        const payload = { email: user.email, sub: user.id };
+
+        return {
+          access_token: this.jwtTokenService.sign(payload, {
+            secret: jwtConstants.accessTokenSecret,
+            expiresIn: jwtConstants.accessTokenExpiresIn,
+          }),
+          refresh_token: this.jwtTokenService.sign(payload, {
+            secret: jwtConstants.refreshTokenSecret,
+            expiresIn: jwtConstants.refreshTokenExpiresIn,
+          }),
+        };
+        // return result;
+      }
+    } catch (error) {
+      console.log('error', error);
     }
-    return null;
-  }
-
-  async login(email: string) {
-    const payload = { email };
-
-    return {
-      access_token: this.jwtTokenService.sign(payload),
-    };
   }
 }
